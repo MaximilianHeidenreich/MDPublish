@@ -7,7 +7,7 @@ export interface InjectTree {
 
 export async function compile(rootDir: string, customHeaders: any, debug: boolean = false) {
     rootDir = "/Volumes/T7/Mac Mini/Programming/MDPublish/test";
-    let buildDir = "/Volumes/T7/Mac Mini/Programming/MDPublish/test/.build";
+    let buildDir = "/Volumes/T7/Mac Mini/Programming/MDPublish/test/.mkp-example/.build";
     // path.dirname(path.fromFileUrl(import.meta.url);
     //const compile = new Kia.default("Compiling from " + src);
     //compile.start();
