@@ -5,10 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    {{ mdp_css_injects | safe }}
 </head>
 <body>
     {{content | safe}}
-    {{meta["mdp-template"] | safe}}
-    {{meta | safe}}
+
+    {{ mdp_js_injects }}
 </body>
 </html>
