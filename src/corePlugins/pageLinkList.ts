@@ -1,12 +1,11 @@
 import { MDPublish } from "../MDPublish.ts";
 import { Leaf } from "../types/tree.ts";
 
-export function asideNav(mdp: MDPublish, leaf: Leaf, content: string, meta: {}, ctx: any): { content: string, meta: any, ctx: any } {
-    
+export function pageLinkList(mdp: MDPublish, leaf: Leaf, markdown: string, meta: {}, ctx: any): { markdown: string, meta: any, ctx: any } {
     let listHtml = "";
 
-    for (const key in mdp.leafTree.leafs) {
-        const leaf = mdp.leafTree.leafs[key];
+    for (const key in mdp.tree.leafs) {
+        const leaf = mdp.tree.leafs[key];
         listHtml += `<li><a href="${leaf.path}">${leaf.name}</a></li>\n`;
     }
 
@@ -15,10 +14,12 @@ export function asideNav(mdp: MDPublish, leaf: Leaf, content: string, meta: {}, 
             ${listHtml}
         </ul>`
     
-    ctx["plugin_asideNav_html"] = outHtml;
+    ctx["mdp"]["plugins"]["pageLinkList"] = {
+        html: outHtml
+    };
 
     return {
-        content,
+        markdown,
         meta,
         ctx
     }

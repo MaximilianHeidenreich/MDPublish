@@ -30,17 +30,16 @@ import { Leaf } from "../types/tree.ts";
 
 }*/
 
-export function wikilinks(mdp: MDPublish, leaf: Leaf, content: string, meta: {}, ctx: {}): { content: string, meta: any, ctx: any } {
-    //const wlRegex = "(?:(?:(?:<([^ ]+)(?:.*)>)\[\[(?:<\/\1>))|(?:\[\[))(?:(?:(?:<([^ ]+)(?:.*)>)(.+?)(?:<\/\2>))|(.+?))(?:(?:(?:<([^ ]+)(?:.*)>)\]\](?:<\/\5>))|(?:\]\]))";
+export async function wikilinks(mdp: MDPublish, leaf: Leaf, markdown: string, meta: {}, ctx: {}): Promise<{ markdown: string, meta: any, ctx: any }> {
     const wlRegex = /\[\[.*?\]\]/g;
 
-    for (const match of content.matchAll(wlRegex)) {
+    for (const match of markdown.matchAll(wlRegex)) {
         const name = match[0].substring(2, match[0].length - 2);
 
         // Find leaf with name
         let targetLeaf: Leaf | undefined;
-        for (const key in mdp.leafTree.leafs) {
-            const l = mdp.leafTree.leafs[key];
+        for (const key in mdp.tree.leafs) {
+            const l = mdp.tree.leafs[key];
             if (l.name === name) {
                 targetLeaf = l;
                 break;
@@ -48,11 +47,13 @@ export function wikilinks(mdp: MDPublish, leaf: Leaf, content: string, meta: {},
         }
 
         if (targetLeaf) {
-            const out = `[${name}](${targetLeaf?.path})`
-            content = content.replaceAll(match[0], out);
+            const out = `[${name}](/${mdp.options.build.pagesDir}/${targetLeaf?.id})`
+            markdown = markdown.replaceAll(match[0], out);
         }
         else {
             // TODO: Print warning
+            console.log("NO LEAF!");
+            
         }
     }
     
@@ -66,7 +67,7 @@ export function wikilinks(mdp: MDPublish, leaf: Leaf, content: string, meta: {},
     //}
 
     return {
-        content,
+        markdown,
         meta,
         ctx
     }

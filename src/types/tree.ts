@@ -2,16 +2,17 @@ import { path } from "../../deps.ts";
 
 export interface Asset {
     id: string;                 // Generated UUID
-    type: "local" | "remote";  // Whether the asset is local file or needs to be downloaded
-    path: string;               // Path to the asset
-    buildPath: string;          // Path to the asset after build
+    type: "local" | "remote" | "inline-css" | "inline-js";   // Whether the asset is local file or needs to be downloaded
+    src: string;                // Path to the asset
+    outPath: string;            // Path to the asset after build
+    path: string;               // Relative path to build out folder.
 }
 
 /**
  * A single leaf (page based on a md file).
  */
 export interface Leaf {
-    id: string;                 // Generared UUID
+    id: string;                 // Hash of name
     name: string;               // File name (no extension)
     srcFile: string;            // Absolute source file path
     path: string;               // Relative path to leaf (e.g. /folder1/page1)
@@ -40,18 +41,22 @@ export interface Leaf {
 
 }
 
-export interface LeafTree {
+export interface Tree { // Not really a tree.. but who cares anyway?
 
     /**
-     * List of file paths to asset files to include in build.
+     * All assets to be included in build.
      */
     assets: { [key: string]: Asset };
 
+    /**
+     * A leaf id that acts as a custom index.html file.
+     * Can be set using `mdp-index: true` in the frontmatter of a md file.
+     * Default: Display core index template.
+     */
     indexLeaf: string | null;
 
     /**
-     * List of leafs (pages).
-     * (key is Leaf id)
+     * All leafs by hash id.
      */
     leafs: { [key: string]: Leaf };
 
