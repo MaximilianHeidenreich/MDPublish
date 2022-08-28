@@ -1,12 +1,13 @@
 import { Marked, Kia, path, ensureDirSync } from "../deps.ts"
-import { readDirRecursive } from "./utils.ts";
+import { readDirRecursive } from "../src/utils.ts";
 
 export interface InjectTree {
     [key: string]: string[]     // key: resourcePath, value: array of page files to inject
 }
 
 export async function compile(rootDir: string, customHeaders: any, debug: boolean = false) {
-    rootDir = "/Volumes/T7/Mac Mini/Programming/MDPublish/test/.mkp-example";
+    //rootDir = "/Volumes/T7/Mac Mini/Programming/MDPublish/test/.mkp-example";
+    rootDir = "/Users/max/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/M4xu\'s\ Garden\ Vault";
     let buildDir = "/Volumes/T7/Mac Mini/Programming/MDPublish/test/.mkp-example/.build";
     // path.dirname(path.fromFileUrl(import.meta.url);
     //const compile = new Kia.default("Compiling from " + src);
@@ -19,6 +20,9 @@ export async function compile(rootDir: string, customHeaders: any, debug: boolea
     let jsGlobalInjects: string[] = [];
     let cssInjects: { [key: string]: string[] } = {};
     let cssGlobalInjects: string[] = [];
+
+    // Link Map
+    let linkMap: { [key: string]: string } = {};    // key: md file name, value: html file path after compile
 
     // Iterate all files & extract frontmatter mkp- kv-pairs
     let mdSrcFiles = readDirRecursive(rootDir).filter(e => e.isFile && e.name.toLowerCase().endsWith(".md"));

@@ -1,4 +1,8 @@
 
+# Refs
+
+- Parse args (start): https://blog.decipher.dev/build-a-cli-application-using-deno
+
 # Pitch
 
 A super small and user friendly way to publish MarkDown sites to Cloudflare Pages.
@@ -13,4 +17,13 @@ A super small and user friendly way to publish MarkDown sites to Cloudflare Page
 
 # Commands
 
-mkp publish <.md file / dir> 
+mkp publish <.md file / dir>
+
+# API
+
+new MDPublish()
+    .markedOptions({ ..., extensions: [] }) // See https://marked.js.org/using_advanced#options
+    .templatesDir("")                       // 
+    .cssDir("")
+    .jsDir("")
+    .compile("srcPath/", "outDir/");

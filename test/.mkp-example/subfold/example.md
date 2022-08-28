@@ -1,6 +1,7 @@
 ---
-mkp-inject-css: ["themeOverride.css"]
-mkp-inject-js: ["single.js"]
+mdp-publish: true
+mdp-css: ["themeOverride.css"]
+mdp-js: ["single.js"]
 ---
 
 ## H2 example
