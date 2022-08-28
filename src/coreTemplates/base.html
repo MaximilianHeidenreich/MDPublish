@@ -6,41 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     {{ mdp_css_injects | safe }}
-<style>
-html, body {
-    margin: 0;
-    padding: 0;
-}
-
-#mdp-body {
-    max-width: 1124px;
-    margin: 0 auto;
-    margin-top: 6em;
-    display: flex;
-    gap: 2em;
-}
-#mdp-body > aside {
-    width: 250px;
-    min-width: 250px;
-    flex-shrink: 0;
-}
-#mdp-body > main {
-    flex-grow: 1;
-}
-</style>
 </head>
     <body>
         <div id="mdp-body">
             <aside>
+                <span>Navigation</span>
                 {{ mdp.plugins.pageLinkList.html | safe}}
             </aside>
 
             <main>
-                {{page_content | safe}}
+                <article class="prose lg:prose-lg prose-a:text-blue-600">
+                    {{page_content | safe}}
+                </article>
             </main>
         </div>
 
-
-        {{ mdp_js_injects }}
+        </script>
+        {{ mdp_js_injects | safe }}
     </body>
 </html>

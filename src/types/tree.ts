@@ -2,7 +2,7 @@ import { path } from "../../deps.ts";
 
 export interface Asset {
     id: string;                 // Generated UUID
-    type: "local" | "remote" | "inline-css" | "inline-js";   // Whether the asset is local file or needs to be downloaded
+    type: "local" | "remote";   // Whether the asset is local file or needs to be downloaded
     src: string;                // Path to the asset
     outPath: string;            // Path to the asset after build
     path: string;               // Relative path to build out folder.

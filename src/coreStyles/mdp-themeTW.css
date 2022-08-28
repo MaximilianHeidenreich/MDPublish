@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+#mdp-body {
+    max-width: 1124px;
+    margin: 0 auto;
+    margin-top: 6em;
+    display: flex;
+    gap: 2em;
+}
+#mdp-body > aside {
+    width: 160px;
+    min-width: 160px;
+    flex-shrink: 0;
+}
+#mdp-body > main {
+    flex-grow: 1;
+}

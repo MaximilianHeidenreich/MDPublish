@@ -73,6 +73,11 @@ export class MDPublish {
     // ===================== HOOKS
 
     parseMarkdown(text: string, options?: Marked.MarkedOptions): { content: string, meta: any } {
+        options = new Marked.MarkedOptions();
+        options.gfm = true;
+        options.breaks = true;
+        options.smartLists = true;
+        options.smartypants = true;
         const { content, meta } = Marked.Marked.parse(text, options);
         return {
             content,
@@ -91,7 +96,7 @@ export class MDPublish {
             const outPath = path.join(mdp.options.build.outDir, path.join(mdp.options.build.assetsDir, `css/${id}.css`));
             const asset: Asset = {
                 id,
-                type: mdp.options.compile.inlineCss ? "inline-css" : (isRemote ? "remote" : "local"),
+                type: isRemote ? "remote" : "local",//mdp.options.compile.inlineCss ? "inline-css" : (isRemote ? "remote" : "local"),
                 src,
                 outPath,
                 path: outPath.replaceAll(mdp.options.build.outDir, "")
@@ -104,7 +109,7 @@ export class MDPublish {
             const outPath = path.join(mdp.options.build.outDir, path.join(mdp.options.build.assetsDir, `css/${id}.js`));
             const asset: Asset = {
                 id,
-                type: mdp.options.compile.inlineCss ? "inline-js" : (isRemote ? "remote" : "local"),
+                type: isRemote ? "remote" : "local",//mdp.options.compile.inlineCss ? "inline-js" : (isRemote ? "remote" : "local"),
                 src,
                 outPath,
                 path: outPath.replaceAll(mdp.options.build.outDir, "")
@@ -269,39 +274,38 @@ export class MDPublish {
         
         // Create CSS injects. TODO: local
         let cssInjectsHtml = "";
-        
-        await mdp.options.compile.globalCss.forEach(async src => {
+        for (const src of mdp.options.compile.globalCss) {
             for (const key in mdp.tree.assets) {
                 const asset = mdp.tree.assets[key];
                 if (asset.src === src) {
-                    if (asset.type === "inline-css") {
+                    if (mdp.options.compile.inlineCss) {
                         let data;
-                        if (asset.src.startsWith("http:") || asset.src.startsWith("https:")) data = await fetch(asset.src).then(res => res.text());
+                        if (asset.type === "remote") data = await fetch(asset.src).then(res => res.text());
                         else data = Deno.readTextFileSync(asset.src);
                         cssInjectsHtml += `<style>${data}</style>`;
                     }
                     else cssInjectsHtml += `<link rel="stylesheet" href="/assets/css/${asset.id}.css">\n`;
                 }
             }
-        });
+        }
         ctx["mdp_css_injects"] = cssInjectsHtml;
 
         // Create JS injects. TODO: local
         let jsInjectsHtml = "";
-        await mdp.options.compile.globalJs.forEach(async src => {
+        for (const src of mdp.options.compile.globalJs) {
             for (const key in mdp.tree.assets) {
                 const asset = mdp.tree.assets[key];
                 if (asset.src === src) {
-                    if (asset.type === "inline-js") {
+                    if (mdp.options.compile.inlineJs) {
                         let data;
-                        if (asset.src.startsWith("http:") || asset.src.startsWith("https:")) data = await fetch(asset.src).then(res => res.text());
+                        if (asset.type === "remote") data = await fetch(asset.src).then(res => res.text());
                         else data = Deno.readTextFileSync(asset.src);
                         jsInjectsHtml += `<script>${data}</script>`;
                     }
                     else jsInjectsHtml += `<script src="/assets/js/${asset.id}.js"></script>\n`; // TODO: deferr / async?
                 }
             }
-        });
+        }
         ctx["mdp_js_injects"] = jsInjectsHtml;
 
         // Render final markdown

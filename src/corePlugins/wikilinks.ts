@@ -17,21 +17,16 @@ export async function wikilinks(mdp: MDPublish, leaf: Leaf, markdown: string, me
             }
         }
 
-        console.log("TARGET EAF: ", targetLeaf);
-        console.log("MATCH: ", match);
-        
-
         if (targetLeaf) {
             const out = `[${name}](/${mdp.options.build.pagesDir}/${targetLeaf?.id})`
             markdown = markdown.replaceAll(match[0], out);
         }
         else {
             // TODO: Print warning
-            console.log("NO LEAF!");
+            console.log(`[Plugin :: Wikilinks] Leaf '${name}' not found!`);
             
         }
 
-        console.log("MARKDOWN: ", markdown);
         
     }
     
