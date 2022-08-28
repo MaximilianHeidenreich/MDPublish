@@ -15,11 +15,21 @@ html, body {
 #mdp-body {
     max-width: 1124px;
     margin: 0 auto;
+    margin-top: 6em;
+    display: flex;
+    gap: 2em;
+}
+#mdp-body > aside {
+    width: 250px;
+    min-width: 250px;
+    flex-shrink: 0;
+}
+#mdp-body > main {
+    flex-grow: 1;
 }
 </style>
 </head>
     <body>
-
         <div id="mdp-body">
             <aside>
                 {{plugin_asideNav_html | safe}}
