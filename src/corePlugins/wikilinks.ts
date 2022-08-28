@@ -30,7 +30,7 @@ import { Leaf } from "../types/tree.ts";
 
 }*/
 
-export function wikilinks(mdp: MDPublish, leaf: Leaf, content: string, meta: {}): { content: string, meta: any } {
+export function wikilinks(mdp: MDPublish, leaf: Leaf, content: string, meta: {}, ctx: {}): { content: string, meta: any, ctx: any } {
     //const wlRegex = "(?:(?:(?:<([^ ]+)(?:.*)>)\[\[(?:<\/\1>))|(?:\[\[))(?:(?:(?:<([^ ]+)(?:.*)>)(.+?)(?:<\/\2>))|(.+?))(?:(?:(?:<([^ ]+)(?:.*)>)\]\](?:<\/\5>))|(?:\]\]))";
     const wlRegex = /\[\[.*?\]\]/g;
 
@@ -67,6 +67,7 @@ export function wikilinks(mdp: MDPublish, leaf: Leaf, content: string, meta: {})
 
     return {
         content,
-        meta
+        meta,
+        ctx
     }
 }

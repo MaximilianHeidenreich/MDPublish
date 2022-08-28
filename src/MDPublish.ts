@@ -3,10 +3,11 @@ import { LeafTree, Leaf, Asset } from "./types/tree.ts";
 import { readDirRecursive } from "./utils.ts";
 
 import { wikilinks } from "./corePlugins/wikilinks.ts";
+import { asideNav } from "./corePlugins/asideNav.ts";
 
 // TODO: Move
 export interface renderLeafPlugin {
-    (mdp: MDPublish, leaf: Leaf, content: string, meta: {}): { content: string, meta: any }
+    (mdp: MDPublish, leaf: Leaf, content: string, meta: {}, ctx: {}): { content: string, meta: any, ctx: any };
 }
 
 export class MDPublish {
@@ -40,7 +41,7 @@ export class MDPublish {
 
     // Plugins
     plugins: { [key: string]: renderLeafPlugin[] } = {
-        renderLeafPlugins: [ wikilinks ],
+        renderLeafPlugins: [ wikilinks, asideNav ],
     }
 
     hashSalt: string;
@@ -123,7 +124,9 @@ export class MDPublish {
                 Deno.copyFileSync(asset.path, asset.buildPath);
             }
             else {
-
+                const data = await fetch(asset.path).then(res => res.text());
+                ensureDirSync(path.parse(asset.buildPath).dir);
+                Deno.writeTextFileSync(asset.buildPath, data, { create: true, append: false });
             }
 
         };
@@ -135,8 +138,9 @@ export class MDPublish {
         //Marked.setOptions()
         //Marked.Marked.use({ extensions: [ wikilinks ] });
         let { meta } = Marked.Marked.parse(fContent);
+        let ctx: { [key: string]: any } = {};
 
-        this.plugins.renderLeafPlugins.forEach(plugin => { const res = plugin(this, leaf, fContent, meta); fContent = res.content; meta = res.meta; });
+        this.plugins.renderLeafPlugins.forEach(plugin => { const res = plugin(this, leaf, fContent, meta, ctx); fContent = res.content; meta = res.meta, ctx = res.ctx; });
 
         const { content } = Marked.Marked.parse(fContent);
 
@@ -146,10 +150,23 @@ export class MDPublish {
             for (const key in assets) {
                 const asset = assets[key];
                 if (asset.path === src) {
-                    cssInjectsHtml += `<link rel="stylesheet" href="assets/css/${asset.id}.css">\n`;
+                    cssInjectsHtml += `<link rel="stylesheet" href="/assets/css/${asset.id}.css">\n`;
                 }
             }
         });
+        ctx["mdp_css_injects"] = cssInjectsHtml;
+
+        // Create JS injects.
+        let jsInjectsHtml = "";
+        this.globalJsSrc.forEach(src => {
+            for (const key in assets) {
+                const asset = assets[key];
+                if (asset.path === src) {
+                    jsInjectsHtml += `<script src="/assets/js/${asset.id}.js"></script>\n`; // TODO: deferr / async?
+                }
+            }
+        });
+        ctx["mdp_js_injects"] = jsInjectsHtml;
 
         let template: any;
         if (leaf.localTemplate) {
@@ -174,11 +191,7 @@ export class MDPublish {
                 template = new nunjucks.default.Template(Deno.readTextFileSync(this.globalTemplateSrc));
             }
         }
-        const ctx = {
-            content,
-            meta,
-            mdp_css_injects: cssInjectsHtml
-        }
+        ctx["content"] = content;
         let renderedHtml = "";
         template && (renderedHtml = template.render(ctx));
         !template && (renderedHtml = nunjucks.default.renderString(content, ctx))

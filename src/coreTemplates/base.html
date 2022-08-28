@@ -6,10 +6,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     {{ mdp_css_injects | safe }}
-</head>
-<body>
-    {{content | safe}}
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+}
 
-    {{ mdp_js_injects }}
-</body>
+#mdp-body {
+    max-width: 1124px;
+    margin: 0 auto;
+}
+</style>
+</head>
+    <body>
+
+        <div id="mdp-body">
+            <aside>
+                {{plugin_asideNav_html | safe}}
+            </aside>
+
+            <main>
+                {{content | safe}}
+            </main>
+        </div>
+
+
+        {{ mdp_js_injects }}
+    </body>
 </html>
