@@ -71,14 +71,16 @@ export class MDPublish {
     }
 
     public async renderLeaf(leaf: Leaf): Promise<string> {
-        const fContent = Deno.readTextFileSync(leaf.srcFile);
+        let fContent = Deno.readTextFileSync(leaf.srcFile);
         Marked.Marked.setOptions(this.markedOption);
         ////@ts-ignore
         //Marked.setOptions()
         //Marked.Marked.use({ extensions: [ wikilinks ] });
-        let { content, meta } = Marked.Marked.parse(fContent);
+        let { meta } = Marked.Marked.parse(fContent);
 
-        this.plugins.renderLeafPlugins.forEach(plugin => { const res = plugin(this, leaf, content, meta); content = res.content; meta = res.meta; });
+        this.plugins.renderLeafPlugins.forEach(plugin => { const res = plugin(this, leaf, fContent, meta); fContent = res.content; meta = res.meta; });
+
+        const { content } = Marked.Marked.parse(fContent);
 
         let template: any;
         if (leaf.localTemplate) {
