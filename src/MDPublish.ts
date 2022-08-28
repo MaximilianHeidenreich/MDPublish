@@ -259,12 +259,12 @@ export class MDPublish {
         let meta = leaf.meta;
 
         // Call renderLeafPlugins -> modify markdown, meta, ctx
-        await mdp.plugins.renderLeafPlugins.forEach(async (plugin) => {
-            const res = await plugin(mdp, leaf, markdown, meta, ctx);
+        for (const pl of mdp.plugins.renderLeafPlugins) {
+            const res = await pl(mdp, leaf, markdown, meta, ctx);
             markdown = res.markdown;
             meta = res.meta;
             ctx = res.ctx;
-        });
+        }
         ctx["meta"] = meta;     // Expose meta to template
         
         // Create CSS injects. TODO: local
